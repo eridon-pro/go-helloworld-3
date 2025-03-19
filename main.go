@@ -13,7 +13,11 @@ func main() {
     e.GET("/api/hello", ApiHelloGet())
     e.GET("/api/goodbye", ApiGoodbyeGet())
 
-    e.Start(":8080")
+    //e.Start(":8080")
+    // エラーをチェックしてログに出力する(静的解析のログ対策）
+    if err := e.Start(":8080"); err != nil {
+        e.Logger.Fatal(err)
+    }
 }
 
 func Hello() echo.HandlerFunc {
