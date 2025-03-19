@@ -9,6 +9,7 @@ func main() {
     e := echo.New()
 
     e.GET("/hello", Hello())
+    e.GET("/goodbye", Goodbye())
     e.GET("/api/hello", ApiHelloGet())
     e.GET("/api/goodbye", ApiGoodbyeGet())
 
@@ -18,6 +19,12 @@ func main() {
 func Hello() echo.HandlerFunc {
     return func(c echo.Context) error {     
         return c.String(http.StatusOK, "hello, world.")
+    }
+}
+
+func Goodbye() echo.HandlerFunc {
+    return func(c echo.Context) error {     
+        return c.String(http.StatusOK, "goodbye.")
     }
 }
 
