@@ -55,8 +55,8 @@ jobs:
 
       # 7. Trivy によるイメージスキャン
       - name: Scan Docker Image with Trivy
-        #uses: aquasecurity/trivy-action@v0.5.0
-        uses: aquasecurity/trivy-action@latest
+        # Latest as of 20250320
+        uses: aquasecurity/trivy-action@v0.30.0
         with:
           image-ref: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
           format: table
