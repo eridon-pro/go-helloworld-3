@@ -19,23 +19,17 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
-      # 2. Go のセットアップ（ここでは Go 1.17 を例として使用）- Dockerfileがあるので不要
-      #- name: Set up Go
-      #  uses: actions/setup-go@v3
-      #  with:
-      #    go-version: '1.17'
-
-      # 3. 静的解析：GolangCI-Lint を実行
+      # 2. 静的解析：GolangCI-Lint を実行
       - name: Run GolangCI-Lint
         uses: golangci/golangci-lint-action@v3
       #  with:
       #    version: v1.50.1
 
-      # 4. テストの実行
+      # 3. テストの実行
       - name: Run tests
         run: go test -v ./...
 
-      # 5. GitHub Container Registry (ghcr.io) へのログイン
+      # 4. GitHub Container Registry (ghcr.io) へのログイン
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -43,7 +37,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 6. Docker Buildx のセットアップ（マルチプラットフォーム対応）
+      # 5. Docker Buildx のセットアップ（マルチプラットフォーム対応）
       - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v3
@@ -51,10 +45,20 @@ jobs:
           buildx-version: latest
           qemu-version: latest
 
-      # 7. Docker イメージのビルド＆プッシュ
+      # 6. Docker イメージのビルド＆プッシュ
       - name: Build and Publish
         run: |
           docker buildx build \
             --push \
             --platform linux/arm/v7,linux/amd64 \
             -t ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }} .
+
+      # 7. Trivy によるイメージスキャン
+      - name: Scan Docker Image with Trivy
+        #uses: aquasecurity/trivy-action@v0.5.0
+        uses: aquasecurity/trivy-action@latest
+        with:
+          image-ref: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
+          format: table
+          exit-code: '1'
+          severity: HIGH,CRITICAL
