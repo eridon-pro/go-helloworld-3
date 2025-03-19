@@ -1,9 +1,5 @@
-name: "CI Pipeline"
-
-on:
-  push:
-    branches:
-      - main
+name: "Build"
+on: [push]
 
 jobs:
   Build:
@@ -13,29 +9,10 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-
     steps:
-      # 1. リポジトリのコードをチェックアウト
       - name: checkout
         uses: actions/checkout@v2
 
-      # 2. Go のセットアップ（ここでは Go 1.17 を例として使用）- Dockerfileがあるので不要
-      #- name: Set up Go
-      #  uses: actions/setup-go@v3
-      #  with:
-      #    go-version: '1.17'
-
-      # 3. 静的解析：GolangCI-Lint を実行
-      - name: Run GolangCI-Lint
-        uses: golangci/golangci-lint-action@v3
-      #  with:
-      #    version: v1.50.1
-
-      # 4. テストの実行
-      - name: Run tests
-        run: go test -v ./...
-
-      # 5. GitHub Container Registry (ghcr.io) へのログイン
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -43,7 +20,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 6. Docker Buildx のセットアップ（マルチプラットフォーム対応）
+
       - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v3
@@ -51,7 +28,6 @@ jobs:
           buildx-version: latest
           qemu-version: latest
 
-      # 7. Docker イメージのビルド＆プッシュ
       - name: Build and Publish
         run: |
           docker buildx build \
