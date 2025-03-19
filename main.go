@@ -30,7 +30,7 @@ func Goodbye() echo.HandlerFunc {
 
 func ApiHelloGet() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.JSON(http.StatusOK, map[string]interface{}{"message": "一言"})
+        return c.JSON(http.StatusOK, map[string]interface{}{"message": "ハロー"})
     }
 }
 
