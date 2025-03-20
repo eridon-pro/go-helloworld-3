@@ -28,7 +28,7 @@ func Hello() echo.HandlerFunc {
 
 func Goodbye() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.String(http.StatusOK, "goodbye.")
+        return c.String(http.StatusOK, "goodbye!")
     }
 }
 
