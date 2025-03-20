@@ -34,11 +34,11 @@ jobs:
         run: go test -v ./...
 
       # 4. GoSec によるセキュリティスキャン
-      - name: Run GoSec Security Scan
-        uses: securego/gosec-action@v2
+      - name: Run GoSec Security Scanner
+        uses: securego/gosec@master
         with:
           # GoSec の引数を指定（ここではプロジェクト全体をスキャン）
-          args: "./..."
+          args: ./...
 
       # 5. GitHub Container Registry (ghcr.io) へのログイン
       - name: Login to GitHub Container Registry
