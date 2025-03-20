@@ -34,12 +34,12 @@ func Goodbye() echo.HandlerFunc {
 
 func ApiHelloGet() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.JSON(http.StatusOK, map[string]interface{}{"message": "ハロー"})
+        return c.JSON(http.StatusOK, map[string]interface{}{"message": "hello, world."})
     }
 }
 
 func ApiGoodbyeGet() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.JSON(http.StatusOK, map[string]interface{}{"message": "goodbye"})
+        return c.JSON(http.StatusOK, map[string]interface{}{"message": "goodbye."})
     }
 }
