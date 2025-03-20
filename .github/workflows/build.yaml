@@ -84,4 +84,4 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
             https://api.github.com/repos/eridon-pro/go-helloworld-3/dispatches \
-            -d "{"event_type": "update-manifest", "client_payload": {"new_tag": "${{ github.sha }}"}}"
+            -d "{\"event_type\": \"update-manifest\", \"client_payload\": {\"new_tag\": \"${{ github.sha }}\"}}"
