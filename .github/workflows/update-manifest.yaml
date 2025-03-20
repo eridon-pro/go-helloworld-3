@@ -23,7 +23,9 @@ jobs:
           git config user.name "eridon-pro"
           git config user.email "take@erikawa.com"
           git add ${MANIFEST_FILE}
-          git commit -m "Update deployment image tag to ${NEW_TAG}"
+          # コミットメッセージに [skip ci] を追加して、push 後のワークフロー実行を防ぐ
+          git commit -m "Update deployment image tag to ${NEW_TAG} [skip ci]"
+          #git commit -m "Update deployment image tag to ${NEW_TAG}"
           # リモート URL を PAT を含む形に設定
           git remote set-url origin "https://${{ secrets.PAT_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git"
           # デバッグ: リモート URL を表示
