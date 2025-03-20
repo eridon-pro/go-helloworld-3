@@ -35,8 +35,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add ${MANIFEST_FILE}
           git commit -m "Update deployment image tag to ${NEW_TAG}"
-          # リモート URL を PAT を含む形に設定（全体を引用符で囲む）
-          git remote set-url origin "https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git"
+          # リモート URL を PAT を含む形に設定（方法 A を試す）
+          git remote set-url origin "https://${{ secrets.PAT_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git"
           # デバッグ: リモート URL を表示
           git remote -v
           # PAT を使って push を実行
