@@ -1,5 +1,9 @@
-name: "Build"
-on: [push]
+name: "CI Pipeline"
+
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   Build:
@@ -9,10 +13,23 @@ jobs:
       packages: write
       attestations: write
       id-token: write
+
     steps:
+      # 1. リポジトリのコードをチェックアウト
       - name: checkout
         uses: actions/checkout@v2
 
+      # 2. 静的解析：GolangCI-Lint を実行
+      - name: Run GolangCI-Lint
+        uses: golangci/golangci-lint-action@v3
+      #  with:
+      #    version: v1.50.1
+
+      # 3. テストの実行
+      - name: Run tests
+        run: go test -v ./...
+
+      # 4. GitHub Container Registry (ghcr.io) へのログイン
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -20,7 +37,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-
+      # 5. Docker Buildx のセットアップ（マルチプラットフォーム対応）
       - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v3
@@ -28,9 +45,43 @@ jobs:
           buildx-version: latest
           qemu-version: latest
 
+      # 6. Docker イメージのビルド＆プッシュ
       - name: Build and Publish
         run: |
           docker buildx build \
             --push \
             --platform linux/arm/v7,linux/amd64 \
             -t ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }} .
+
+      # 7. Trivy によるイメージスキャン
+      - name: Scan Docker Image with Trivy
+        # Latest as of 20250320
+        uses: aquasecurity/trivy-action@0.30.0
+        with:
+          image-ref: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
+          format: table
+          exit-code: '1'
+          severity: HIGH,CRITICAL
+
+      # 8. マニフェストの更新
+      #- name: Update manifest with new image tag
+      #  run: |
+      #    NEW_TAG=${{ github.sha }}
+      #    MANIFEST_FILE="manifest/deployment.yaml"
+      #    # マニフェスト内の image フィールドを新しいタグに置換
+      #    sed -i "s|ghcr.io/eridon-pro/go-helloworld-3:.*|ghcr.io/eridon-pro/go-helloworld-3:${NEW_TAG}|g" ${MANIFEST_FILE}
+      #    # Git の設定を行い、変更をコミット＆プッシュ
+      #    git config user.name "github-actions[bot]"
+      #    git config user.email "github-actions[bot]@users.noreply.github.com"
+      #    git add ${MANIFEST_FILE}
+      #    git commit -m "Update deployment image tag to ${NEW_TAG}"
+      #    git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git main
+
+      # 8. repository_dispatch イベントを発行して、manifest更新ワークフローをトリガーする
+      - name: Trigger manifest update
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+            https://api.github.com/repos/eridon-pro/go-helloworld-3/dispatches \
+            -d "{\"event_type\": \"update-manifest\", \"client_payload\": {\"new_tag\": \"${{ github.sha }}\"}}"

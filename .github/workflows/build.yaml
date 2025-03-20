@@ -7,6 +7,8 @@ on:
 
 jobs:
   Build:
+    # [skip ci] を含むコミットはこのジョブをトリガーしない
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -18,6 +20,8 @@ jobs:
       # 1. リポジトリのコードをチェックアウト
       - name: checkout
         uses: actions/checkout@v2
+        with:
+          persist-credentials: false
 
       # 2. 静的解析：GolangCI-Lint を実行
       - name: Run GolangCI-Lint
@@ -64,24 +68,21 @@ jobs:
           severity: HIGH,CRITICAL
 
       # 8. マニフェストの更新
-      #- name: Update manifest with new image tag
-      #  run: |
-      #    NEW_TAG=${{ github.sha }}
-      #    MANIFEST_FILE="manifest/deployment.yaml"
-      #    # マニフェスト内の image フィールドを新しいタグに置換
-      #    sed -i "s|ghcr.io/eridon-pro/go-helloworld-3:.*|ghcr.io/eridon-pro/go-helloworld-3:${NEW_TAG}|g" ${MANIFEST_FILE}
-      #    # Git の設定を行い、変更をコミット＆プッシュ
-      #    git config user.name "github-actions[bot]"
-      #    git config user.email "github-actions[bot]@users.noreply.github.com"
-      #    git add ${MANIFEST_FILE}
-      #    git commit -m "Update deployment image tag to ${NEW_TAG}"
-      #    git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git main
-
-      # 8. repository_dispatch イベントを発行して、manifest更新ワークフローをトリガーする
-      - name: Trigger manifest update
+      - name: Update manifest with new image tag
         run: |
-          curl -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
-            https://api.github.com/repos/eridon-pro/go-helloworld-3/dispatches \
-            -d "{\"event_type\": \"update-manifest\", \"client_payload\": {\"new_tag\": \"${{ github.sha }}\"}}"
+          NEW_TAG=${{ github.sha }}
+          MANIFEST_FILE="manifest/deployment.yaml"
+          # マニフェスト内の image フィールドを新しいタグに置換
+          sed -i "s|ghcr.io/eridon-pro/go-helloworld-3:.*|ghcr.io/eridon-pro/go-helloworld-3:${NEW_TAG}|g" ${MANIFEST_FILE}
+          # Git の設定を行い、変更をコミット＆プッシュ
+          #git config user.name "github-actions[bot]"
+          #git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "eridon-pro"
+          git config user.email "take@erikawa.com"
+          git add ${MANIFEST_FILE}
+          # コミットメッセージに [skip ci] を追加して、push による再トリガーを防止
+          #git commit -m "Update deployment image tag to ${NEW_TAG}"
+          git commit -m "Update deployment image tag to ${NEW_TAG} [skip ci]"
+          # リモート URL を PAT を含む形に設定
+          git remote set-url origin "https://${{ secrets.PAT_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git"
+          git push origin main

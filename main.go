@@ -40,6 +40,6 @@ func ApiHelloGet() echo.HandlerFunc {
 
 func ApiGoodbyeGet() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.JSON(http.StatusOK, map[string]interface{}{"message": "goodbye."})
+        return c.JSON(http.StatusOK, map[string]interface{}{"message": "goodbye!"})
     }
 }
