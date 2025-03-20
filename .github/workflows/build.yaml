@@ -77,7 +77,7 @@ jobs:
       #    git commit -m "Update deployment image tag to ${NEW_TAG}"
       #    git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git main
 
-      # 8. repository_dispatch イベントを発行して、manifest更新ワークフローをトリガーする
+      # 8. repository_dispatch イベントを発行して、manifest更新ワークフローをトリガーする 
       - name: Trigger manifest update
         run: |
           curl -X POST \
