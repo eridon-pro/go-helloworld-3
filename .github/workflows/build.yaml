@@ -40,7 +40,17 @@ jobs:
           # GoSec の引数を指定（ここではプロジェクト全体をスキャン）
           args: ./...
 
-      # 5. GitHub Container Registry (ghcr.io) へのログイン
+      # 5. OWASP Dependency Check による SCA スキャン
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "go-helloworld-3"
+          scanPath: "./"
+          format: "ALL"
+          # 脆弱性の CVSS が 7.0 以上の場合はビルドを失敗させる設定（必要に応じて変更可）
+          failOnCVSS: "7.0"
+
+      # 6. GitHub Container Registry (ghcr.io) へのログイン
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -48,7 +58,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 6. Docker Buildx のセットアップ（マルチプラットフォーム対応）
+      # 7. Docker Buildx のセットアップ（マルチプラットフォーム対応）
       - name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v3
@@ -56,7 +66,7 @@ jobs:
           buildx-version: latest
           qemu-version: latest
 
-      # 7. Docker イメージのビルド＆プッシュ
+      # 8. Docker イメージのビルド＆プッシュ
       - name: Build and Publish
         run: |
           docker buildx build \
@@ -64,7 +74,7 @@ jobs:
             --platform linux/arm/v7,linux/amd64 \
             -t ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }} .
 
-      # 8. Trivy によるイメージスキャン
+      # 9. Trivy によるイメージスキャン
       - name: Scan Docker Image with Trivy
         # Latest as of 20250320
         uses: aquasecurity/trivy-action@0.30.0
@@ -74,7 +84,7 @@ jobs:
           exit-code: '1'
           severity: HIGH,CRITICAL
 
-      # 9. マニフェストの更新
+      # 10. マニフェストの更新
       - name: Update manifest with new image tag
         run: |
           NEW_TAG=${{ github.sha }}
