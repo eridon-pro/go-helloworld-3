@@ -45,10 +45,12 @@ jobs:
         uses: dependency-check/Dependency-Check_Action@main
         with:
           project: "go-helloworld-3"
-          scanPath: "./"
+          path: "."
           format: "ALL"
           # 脆弱性の CVSS が 7.0 以上の場合はビルドを失敗させる設定（必要に応じて変更可）
-          failOnCVSS: "7.0"
+          args: >
+            --failOnCVSS 7
+            --enableRetired
 
       # 6. GitHub Container Registry (ghcr.io) へのログイン
       - name: Login to GitHub Container Registry
