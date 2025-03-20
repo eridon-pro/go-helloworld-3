@@ -12,6 +12,7 @@ func main() {
     e.GET("/goodbye", Goodbye())
     e.GET("/api/hello", ApiHelloGet())
     e.GET("/api/goodbye", ApiGoodbyeGet())
+    e.GET("/api/thankyou", ApiThankyouGet())
 
     //e.Start(":8080")
     // エラーをチェックしてログに出力する(静的解析のログ対策）
@@ -41,5 +42,11 @@ func ApiHelloGet() echo.HandlerFunc {
 func ApiGoodbyeGet() echo.HandlerFunc {
     return func(c echo.Context) error {     
         return c.JSON(http.StatusOK, map[string]interface{}{"message": "goodbye!"})
+    }
+}
+
+func ApiThankyouGet() echo.HandlerFunc {
+    return func(c echo.Context) error {     
+        return c.JSON(http.StatusOK, map[string]interface{}{"message": "Thank you!"})
     }
 }
