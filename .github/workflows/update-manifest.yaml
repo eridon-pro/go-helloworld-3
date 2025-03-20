@@ -31,8 +31,8 @@ jobs:
           # マニフェスト内の image フィールドを新しいタグに置換
           sed -i "s|ghcr.io/eridon-pro/go-helloworld-3:.*|ghcr.io/eridon-pro/go-helloworld-3:${NEW_TAG}|g" ${MANIFEST_FILE}
           # Git の設定を行い、変更をコミット
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "eridon-pro"
+          git config user.email "take@erikawa.com"
           git add ${MANIFEST_FILE}
           git commit -m "Update deployment image tag to ${NEW_TAG}"
           # リモート URL を PAT を含む形に設定（方法 A を試す）
