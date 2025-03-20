@@ -10,6 +10,7 @@ func main() {
 
     e.GET("/hello", Hello())
     e.GET("/goodbye", Goodbye())
+    e.GET("/thankyou", Thankyou())
     e.GET("/api/hello", ApiHelloGet())
     e.GET("/api/goodbye", ApiGoodbyeGet())
     e.GET("/api/thankyou", ApiThankyouGet())
@@ -30,6 +31,12 @@ func Hello() echo.HandlerFunc {
 func Goodbye() echo.HandlerFunc {
     return func(c echo.Context) error {     
         return c.String(http.StatusOK, "goodbye!")
+    }
+}
+
+func Thankyou() echo.HandlerFunc {
+    return func(c echo.Context) error {     
+        return c.String(http.StatusOK, "thank you!")
     }
 }
 
