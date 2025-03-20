@@ -105,3 +105,10 @@ jobs:
           # リモート URL を PAT を含む形に設定
           git remote set-url origin "https://${{ secrets.PAT_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git"
           git push origin main
+
+      # 11. Dependency Check レポートのアップロード
+      - name: Upload Dependency Check Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: dependency-check-reports
+          path: reports/
