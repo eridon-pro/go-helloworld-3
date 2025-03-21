@@ -79,14 +79,30 @@ jobs:
       # 9. Trivy によるイメージスキャン
       - name: Scan Docker Image with Trivy
         # Latest as of 20250320
-        uses: aquasecurity/trivy-action@0.30.0
+        #uses: aquasecurity/trivy-action@0.30.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
           format: table
           exit-code: '1'
           severity: HIGH,CRITICAL
 
-      # 10. マニフェストの更新
+      # 10. SBOM の生成（Anchore sbom-action を利用）
+      - name: Generate SBOM with Anchore SBOM Action
+        uses: anchore/sbom-action@main
+        with:
+          image: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
+          output_format: cyclonedx-json
+          output_file: sbom-${{ github.sha }}.json
+
+      # 11. SBOM アーティファクトのアップロード
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: sbom
+          path: sbom-${{ github.sha }}.json
+
+      # 12. マニフェストの更新
       - name: Update manifest with new image tag
         run: |
           NEW_TAG=${{ github.sha }}
@@ -106,7 +122,7 @@ jobs:
           git remote set-url origin "https://${{ secrets.PAT_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git"
           git push origin main
 
-      # 11. Dependency Check レポートのアップロード
+      # 13. Dependency Check レポートのアップロード
       - name: Upload Dependency Check Reports
         uses: actions/upload-artifact@main
         with:
