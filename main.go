@@ -36,7 +36,7 @@ func Goodbye() echo.HandlerFunc {
 
 func Thankyou() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.String(http.StatusOK, "thank you!!")
+        return c.String(http.StatusOK, "thank you!")
     }
 }
 
@@ -54,6 +54,6 @@ func ApiGoodbyeGet() echo.HandlerFunc {
 
 func ApiThankyouGet() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.JSON(http.StatusOK, map[string]interface{}{"message": "Thank you!!"})
+        return c.JSON(http.StatusOK, map[string]interface{}{"message": "Thank you!"})
     }
 }

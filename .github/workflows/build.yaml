@@ -25,9 +25,11 @@ jobs:
 
       # 2. 静的解析：GolangCI-Lint を実行
       - name: Run GolangCI-Lint
-        uses: golangci/golangci-lint-action@v3
+        #uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@main
       #  with:
       #    version: v1.50.1
+      #    version: latest
 
       # 3. テストの実行
       - name: Run tests
@@ -37,7 +39,7 @@ jobs:
       - name: Run GoSec Security Scanner
         uses: securego/gosec@master
         with:
-          # GoSec の引数を指定（ここではプロジェクト全体をスキャン）
+          # GoSec の引数を指定（プロジェクト全体をスキャン）
           args: ./...
 
       # 5. OWASP Dependency Check による SCA スキャン
