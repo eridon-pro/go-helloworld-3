@@ -130,3 +130,33 @@ jobs:
         with:
           name: dependency-check-reports
           path: reports/
+
+      # 14. Notify Discord on failure
+      #- name: Notify Discord on failure
+      #  if: failure()
+      #  run: |
+      #    curl -X POST -H "Content-Type: application/json" \
+      #    --data '{"content": "CI pipeline for go-helloworld-3 failed! Please check the logs."}' \
+      #    ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: CI Pipeline Success
+        uses: rjstone/discord-webhook-notify@v1
+        if: success()
+        with:
+          severity: info
+          details: CI Pipeline Succeeded!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: CI Pipeline Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          details: CI Pipeline Failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Test Cancelled
+        uses: rjstone/discord-webhook-notify@v1
+        if: cancelled()
+        with:
+          severity: warn
+          details: CI Pileline Cancelled!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
