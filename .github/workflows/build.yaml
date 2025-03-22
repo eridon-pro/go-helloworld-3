@@ -76,7 +76,9 @@ jobs:
           docker buildx build \
             --push \
             --platform linux/arm/v7,linux/amd64 \
-            -t ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }} .
+            -t ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }} \
+            -t ghcr.io/eridon-pro/go-helloworld-3:latest \
+            .
 
       # 9. Trivy によるイメージスキャン
       - name: Scan Docker Image with Trivy
