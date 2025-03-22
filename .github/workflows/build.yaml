@@ -145,18 +145,18 @@ jobs:
         with:
           severity: info
           details: CI Pipeline Succeeded!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
       - name: CI Pipeline Failure
         uses: rjstone/discord-webhook-notify@v1
         if: failure()
         with:
           severity: error
           details: CI Pipeline Failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      - name: Test Cancelled
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: CI Pileline Cancelled
         uses: rjstone/discord-webhook-notify@v1
         if: cancelled()
         with:
           severity: warn
           details: CI Pileline Cancelled!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
