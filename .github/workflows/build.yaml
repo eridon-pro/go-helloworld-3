@@ -151,7 +151,7 @@ jobs:
         if: failure()
         with:
           severity: error
-          details: CI Pipeline Failed!
+          details: CI Pipeline Failed! Check PR Log.
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
       - name: CI Pileline Cancelled
         uses: rjstone/discord-webhook-notify@v1
