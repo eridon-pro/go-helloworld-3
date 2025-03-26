@@ -70,29 +70,48 @@ jobs:
           buildx-version: latest
           qemu-version: latest
 
-      # 8. Docker イメージのビルド＆プッシュ
-      - name: Build and Publish
-        run: |
-          docker buildx build \
-            --push \
-            --platform linux/arm/v7,linux/amd64 \
-            -t ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }} \
-            -t ghcr.io/eridon-pro/go-helloworld-3:latest \
-            .
+      # 8. docker/metadata-action でタグとdigestを自動生成
+      - id: docker_meta
+        uses: docker/metadata-action@v5.6.1
+        with:
+          images: ghcr.io/eridon-pro/go-helloworld-3
+          tags: type=sha,format=long
 
-      # 9. Cosign のインストール
-      - name: Install Cosign and Sign image with GitHub OIDC Token
-        uses: sigstore/cosign-installer@v3.8.1
+      # 9. Docker イメージのビルド＆プッシュ
+      #- name: Build and Publish
+      #  run: |
+      #    docker buildx build \
+      #      --push \
+      #      --platform linux/arm/v7,linux/amd64 \
+      #      -t ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }} \
+      #      -t ghcr.io/eridon-pro/go-helloworld-3:latest \
+      #      .
 
-      # 10. GitHub OIDC トークンを利用した署名（コミットSHAタグのイメージに対して）
+      # 9. Docker イメージのビルド＆プッシュ（コミットSHAタグと latest タグを付与）
+      - name: Build and Publish container images
+        id: build-and-push
+        uses: docker/build-push-action@v6.14.0
+        with:
+          platforms: linux/arm/v7,linux/amd64
+          push: true
+          tags: |
+            ${{ steps.docker_meta.outputs.tags }}
+            ghcr.io/eridon-pro/go-helloworld-3:latest
+
+      # 10. Cosign のインストール
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+
+      # 11. GitHub OIDC トークンを利用した署名（コミットSHAタグのイメージに対して）
       - name: Sign commit SHA image with GitHub OIDC Token
         env:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
           TAG: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
         run: |
+          # DIGEST と TAG を組み合わせて署名
           cosign sign --yes ${TAG}@${DIGEST}
 
-      # 11. Trivy によるイメージスキャン
+      # 12. Trivy によるイメージスキャン
       - name: Scan Docker Image with Trivy
         # Latest as of 20250320
         #uses: aquasecurity/trivy-action@0.30.0
@@ -103,7 +122,7 @@ jobs:
           exit-code: '1'
           severity: HIGH,CRITICAL
 
-      # 12. SBOM の生成（Anchore sbom-action を利用）
+      # 13. SBOM の生成（Anchore sbom-action を利用）
       - name: Generate SBOM with Anchore SBOM Action
         uses: anchore/sbom-action@main
         with:
@@ -111,14 +130,14 @@ jobs:
           output_format: cyclonedx-json
           output_file: sbom-${{ github.sha }}.json
 
-      # 13. SBOM アーティファクトのアップロード
+      # 14. SBOM アーティファクトのアップロード
       - name: Upload SBOM Artifact
         uses: actions/upload-artifact@main
         with:
           name: sbom
           path: sbom-${{ github.sha }}.json
 
-      # 14. マニフェストの更新
+      # 15. マニフェストの更新
       - name: Update manifest with new image tag
         run: |
           NEW_TAG=${{ github.sha }}
@@ -135,14 +154,14 @@ jobs:
           git remote set-url origin "https://${{ secrets.PAT_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git"
           git push origin main
 
-      # 15. Dependency Check レポートのアップロード
+      # 16. Dependency Check レポートのアップロード
       - name: Upload Dependency Check Reports
         uses: actions/upload-artifact@main
         with:
           name: dependency-check-reports
           path: reports/
 
-      # 16. Notify Discord on failure
+      # 17. Notify Discord on failure
       #- name: Notify Discord on failure
       #  if: failure()
       #  run: |
