@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pre-sync-scan
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      initContainers:
+      - name: cosign-verify
+        image: ghcr.io/sigstore/cosign:latest
+        command: ["cosign", "verify", "--oidc-issuer-url", "https://token.actions.githubusercontent.com", "ghcr.io/eridon-pro/go-helloworld-3:latest"]
+      containers:
+      - name: trivy-scan
+        image: aquasecurity/trivy:latest
+        command: ["trivy", "image", "--exit-code", "1", "--severity", "HIGH,CRITICAL", "ghcr.io/eridon-pro/go-helloworld-3:latest"]
+      restartPolicy: Never
+  backoffLimit: 1

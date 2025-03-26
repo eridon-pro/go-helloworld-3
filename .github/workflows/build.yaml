@@ -80,7 +80,16 @@ jobs:
             -t ghcr.io/eridon-pro/go-helloworld-3:latest \
             .
 
-      # 9. Trivy によるイメージスキャン
+      # 9. Cosign のインストールとGitHub OIDC トークンを利用した署名（コミットSHAタグのイメージに対して）
+      - name: Install Cosign and Sign image with GitHub OIDC Token
+        uses: sigstore/cosign-installer@v3.8.1
+        env:
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          TAG: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
+        run: |
+          cosign sign --yes ${TAG}@${DIGEST}
+
+      # 10. Trivy によるイメージスキャン
       - name: Scan Docker Image with Trivy
         # Latest as of 20250320
         #uses: aquasecurity/trivy-action@0.30.0
@@ -91,7 +100,7 @@ jobs:
           exit-code: '1'
           severity: HIGH,CRITICAL
 
-      # 10. SBOM の生成（Anchore sbom-action を利用）
+      # 11. SBOM の生成（Anchore sbom-action を利用）
       - name: Generate SBOM with Anchore SBOM Action
         uses: anchore/sbom-action@main
         with:
@@ -99,23 +108,20 @@ jobs:
           output_format: cyclonedx-json
           output_file: sbom-${{ github.sha }}.json
 
-      # 11. SBOM アーティファクトのアップロード
+      # 12. SBOM アーティファクトのアップロード
       - name: Upload SBOM Artifact
         uses: actions/upload-artifact@main
         with:
           name: sbom
           path: sbom-${{ github.sha }}.json
 
-      # 12. マニフェストの更新
+      # 13. マニフェストの更新
       - name: Update manifest with new image tag
         run: |
           NEW_TAG=${{ github.sha }}
           MANIFEST_FILE="manifest/deployment.yaml"
           # マニフェスト内の image フィールドを新しいタグに置換
           sed -i "s|ghcr.io/eridon-pro/go-helloworld-3:.*|ghcr.io/eridon-pro/go-helloworld-3:${NEW_TAG}|g" ${MANIFEST_FILE}
-          # Git の設定を行い、変更をコミット＆プッシュ
-          #git config user.name "github-actions[bot]"
-          #git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "eridon-pro"
           git config user.email "take@erikawa.com"
           git add ${MANIFEST_FILE}
