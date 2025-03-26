@@ -117,7 +117,8 @@ jobs:
         #uses: aquasecurity/trivy-action@0.30.0
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
+          #image-ref: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
+          image-ref: ghcr.io/eridon-pro/go-helloworld-3:sha-${{ github.sha }}
           format: table
           exit-code: '1'
           severity: HIGH,CRITICAL
@@ -126,7 +127,7 @@ jobs:
       - name: Generate SBOM with Anchore SBOM Action
         uses: anchore/sbom-action@main
         with:
-          image: ghcr.io/eridon-pro/go-helloworld-3:${{ github.sha }}
+          image: ghcr.io/eridon-pro/go-helloworld-3:sha-${{ github.sha }}
           output_format: cyclonedx-json
           output_file: sbom-${{ github.sha }}.json
 
@@ -135,12 +136,12 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: sbom
-          path: sbom-${{ github.sha }}.json
+          path: sbom-sha-${{ github.sha }}.json
 
       # 15. マニフェストの更新
       - name: Update manifest with new image tag
         run: |
-          NEW_TAG=${{ github.sha }}
+          NEW_TAG=sha-${{ github.sha }}
           MANIFEST_FILE="manifest/deployment.yaml"
           # マニフェスト内の image フィールドを新しいタグに置換
           sed -i "s|ghcr.io/eridon-pro/go-helloworld-3:.*|ghcr.io/eridon-pro/go-helloworld-3:${NEW_TAG}|g" ${MANIFEST_FILE}
