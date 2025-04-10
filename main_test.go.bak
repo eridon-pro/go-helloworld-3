@@ -4,7 +4,6 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/labstack/echo"
@@ -31,14 +30,8 @@ func TestHello(t *testing.T) {
 	}
 
 	// レスポンス内容のチェック
-	//expected := "hello, world."
-	//if rec.Body.String() != expected {
-	//	t.Errorf("expected body %q, got %q", expected, rec.Body.String())
-	//}
-
-	// レスポンス内容のチェック（部分一致）
-	body := rec.Body.String()
-	if !strings.Contains(body, "hello, world") {
-		t.Errorf("expected response to contain 'hello, world', but got %q", body)
+	expected := "hello, world."
+	if rec.Body.String() != expected {
+		t.Errorf("expected body %q, got %q", expected, rec.Body.String())
 	}
 }
