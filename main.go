@@ -25,7 +25,7 @@ func main() {
 func Hello() echo.HandlerFunc {
     return func(c echo.Context) error {     
         //return c.String(http.StatusOK, "hello, world.")
-        html := <!DOCTYPE html>
+        html := `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -35,7 +35,7 @@ func Hello() echo.HandlerFunc {
 <body>
   <h1>hello, world.</h1>
 </body>
-</html>
+</html>`
         return c.HTML(http.StatusOK, html)
     }
 }
