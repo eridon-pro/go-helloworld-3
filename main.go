@@ -24,19 +24,7 @@ func main() {
 
 func Hello() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        //return c.String(http.StatusOK, "hello, world.")
-        html := `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="refresh" content="30">
-  <title>hello, world.</title>
-</head>
-<body>
-  <h1>hello, world.</h1>
-</body>
-</html>`
-        return c.HTML(http.StatusOK, html)
+        return c.String(http.StatusOK, "hello, world..")
     }
 }
 
