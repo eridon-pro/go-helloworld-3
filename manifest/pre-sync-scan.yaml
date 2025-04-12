@@ -13,8 +13,8 @@ spec:
       - name: cosign-verify
         #image: ghcr.io/sigstore/cosign:main
         #image: ghcr.io/sigstore/cosign
-        #image: ghcr.io/sigstore/cosign/cosign:main
-        image: gcr.io/projectsigstore/cosign:latest
+        image: ghcr.io/sigstore/cosign/cosign:latest
+        #image: gcr.io/projectsigstore/cosign:latest
         env:
           - name: IMAGE_REF
             value: ghcr.io/eridon-pro/go-helloworld-3:sha-d95e39f0e6d6cce42c1c52a86d81140dd948d9e5
