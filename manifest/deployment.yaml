@@ -15,5 +15,5 @@ spec:
         app: go-helloworld-3
     spec:
       containers:
-      - image: ghcr.io/eridon-pro/go-helloworld-3:sha-7227635ea492caa2462cc3b5872bc3971057f657
+      - image: ghcr.io/eridon-pro/go-helloworld-3:sha-ae07e126b676e14096762d43772f70f572c84b2f
         name: go-helloworld-3
