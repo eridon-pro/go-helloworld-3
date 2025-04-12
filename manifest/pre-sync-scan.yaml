@@ -14,12 +14,12 @@ spec:
         image: ghcr.io/sigstore/cosign:main
         env:
           - name: IMAGE_REF
-            value: "ghcr.io/eridon-pro/go-helloworld-3:sha-xxxx"
+            value: ghcr.io/eridon-pro/go-helloworld-3:sha-xxxx
         command: ["cosign", "verify", "--keyless", "$(IMAGE_REF)"]
       - name: trivy-scan
         image: aquasecurity/trivy:master
         env:
           - name: IMAGE_REF
-            value: "ghcr.io/eridon-pro/go-helloworld-3:sha-xxxx"
+            value: ghcr.io/eridon-pro/go-helloworld-3:sha-xxxx
         command: ["trivy", "image", "--exit-code", "1", "--severity", "HIGH,CRITICAL", "$(IMAGE_REF)"]
   backoffLimit: 1
