@@ -12,7 +12,9 @@ spec:
       containers:
       - name: cosign-verify
         #image: ghcr.io/sigstore/cosign:main
-        image: ghcr.io/sigstore/cosign
+        #image: ghcr.io/sigstore/cosign
+        #image: ghcr.io/sigstore/cosign/cosign:main
+        image: gcr.io/projectsigstore/cosign:latest
         env:
           - name: IMAGE_REF
             value: ghcr.io/eridon-pro/go-helloworld-3:sha-3fca0ff9a5c3a8e1d272d6dbc8bc3d950d4a5b62
@@ -20,7 +22,8 @@ spec:
       - name: trivy-scan
         #image: aquasecurity/trivy:main
         #image: aquasecurity/trivy
-        image: ghcr.io/aquasecurity/trivy:main
+        #image: ghcr.io/aquasecurity/trivy:main
+        image: aquasec/trivy:latest
         env:
           - name: IMAGE_REF
             value: ghcr.io/eridon-pro/go-helloworld-3:sha-3fca0ff9a5c3a8e1d272d6dbc8bc3d950d4a5b62
