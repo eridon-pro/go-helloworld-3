@@ -19,7 +19,8 @@ spec:
         command: ["cosign", "verify", "--keyless", "$(IMAGE_REF)"]
       - name: trivy-scan
         #image: aquasecurity/trivy:main
-        image: aquasecurity/trivy
+        #image: aquasecurity/trivy
+        image: ghcr.io/aquasecurity/trivy:main
         env:
           - name: IMAGE_REF
             value: ghcr.io/eridon-pro/go-helloworld-3:sha-9c2c92b38cd5e0b23cdd6590c8717a0d79c9b2f5
