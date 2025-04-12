@@ -143,11 +143,13 @@ jobs:
         run: |
           NEW_TAG=sha-${{ github.sha }}
           MANIFEST_FILE="manifest/deployment.yaml"
+          PRE_SCAN_MANIFEST_FILE="manifest/pre-sync-scan.yaml"
           # マニフェスト内の image フィールドを新しいタグに置換
           sed -i "s|ghcr.io/eridon-pro/go-helloworld-3:.*|ghcr.io/eridon-pro/go-helloworld-3:${NEW_TAG}|g" ${MANIFEST_FILE}
+          sed -i "s|ghcr.io/eridon-pro/go-helloworld-3:.*|ghcr.io/eridon-pro/go-helloworld-3:${NEW_TAG}|g" ${PRE_SCAN_MANIFEST_FILE}
           git config user.name "eridon-pro"
           git config user.email "take@erikawa.com"
-          git add ${MANIFEST_FILE}
+          git add ${MANIFEST_FILE} ${PRE_SCAN_MANIFEST_FILE}
           # コミットメッセージに [skip ci] を追加して、push による再トリガーを防止
           #git commit -m "Update deployment image tag to ${NEW_TAG}"
           git commit -m "Update deployment image tag to ${NEW_TAG} [skip ci]"
