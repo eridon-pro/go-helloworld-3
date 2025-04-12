@@ -42,13 +42,13 @@ func Hello() echo.HandlerFunc {
 
 func Goodbye() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.String(http.StatusOK, "goodbye!")
+        return c.String(http.StatusOK, "goodbye.")
     }
 }
 
 func Thankyou() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.String(http.StatusOK, "thank you!")
+        return c.String(http.StatusOK, "thank you.")
     }
 }
 
@@ -60,12 +60,12 @@ func ApiHelloGet() echo.HandlerFunc {
 
 func ApiGoodbyeGet() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.JSON(http.StatusOK, map[string]interface{}{"message": "goodbye!"})
+        return c.JSON(http.StatusOK, map[string]interface{}{"message": "goodbye."})
     }
 }
 
 func ApiThankyouGet() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.JSON(http.StatusOK, map[string]interface{}{"message": "Thank you!"})
+        return c.JSON(http.StatusOK, map[string]interface{}{"message": "Thank you."})
     }
 }
