@@ -15,7 +15,10 @@ spec:
         env:
           - name: IMAGE_REF
             value: ghcr.io/eridon-pro/go-helloworld-3:sha-3bef25202bf8b239eee8f80c28f7d8951d5204c6
-        command: ["cosign", "verify", "$(IMAGE_REF)"]
+        command: ["cosign", "verify", 
+          "--certificate-oidc-issuer", "https://token.actions.githubusercontent.com", 
+          "--certificate-identity-regexp", "^https://github.com/eridon-pro/go-helloworld-3/", 
+          "$(IMAGE_REF)"]
       - name: trivy-scan
         image: aquasec/trivy:latest
         env:
