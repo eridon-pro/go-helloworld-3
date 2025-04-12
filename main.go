@@ -48,7 +48,7 @@ func Goodbye() echo.HandlerFunc {
 
 func Thankyou() echo.HandlerFunc {
     return func(c echo.Context) error {     
-        return c.String(http.StatusOK, "thank you!!")
+        return c.String(http.StatusOK, "thank you!")
     }
 }
 
