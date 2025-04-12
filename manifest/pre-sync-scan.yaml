@@ -11,13 +11,15 @@ spec:
       restartPolicy: Never
       containers:
       - name: cosign-verify
-        image: ghcr.io/sigstore/cosign:main
+        #image: ghcr.io/sigstore/cosign:main
+        image: ghcr.io/sigstore/cosign
         env:
           - name: IMAGE_REF
             value: ghcr.io/eridon-pro/go-helloworld-3:sha-37af3de6de24207a330ddb41ef0f2a00243c5b59
         command: ["cosign", "verify", "--keyless", "$(IMAGE_REF)"]
       - name: trivy-scan
-        image: aquasecurity/trivy:main
+        #image: aquasecurity/trivy:main
+        image: aquasecurity/trivy
         env:
           - name: IMAGE_REF
             value: ghcr.io/eridon-pro/go-helloworld-3:sha-37af3de6de24207a330ddb41ef0f2a00243c5b59
