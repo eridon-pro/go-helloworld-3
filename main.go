@@ -33,7 +33,7 @@ func Hello() echo.HandlerFunc {
   <title>hello, world.</title>
 </head>
 <body>
-  <h1>hello, world.</h1>
+  <h1>hello, world!</h1>
 </body>
 </html>`
         return c.HTML(http.StatusOK, html)
