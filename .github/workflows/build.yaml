@@ -33,10 +33,10 @@ jobs:
       - name: Run GolangCI-Lint
         #uses: golangci/golangci-lint-action@v3
         uses: golangci/golangci-lint-action@main
-        with:
+        #with:
           #version: v1.50.1
           #version: latest
-          skip-cache: true
+          #skip-cache: true
         env:
           GO111MODULE: "on"
 
@@ -132,7 +132,26 @@ jobs:
           exit-code: '1'
           severity: HIGH,CRITICAL
 
-      # 13. SBOM の生成（Anchore sbom-action を利用）
+      # 13. 一時的にコンテナを起動し、DASTスキャン（OWASP ZAP）を実行
+      - name: Start app container for DAST
+        run: |
+          docker run -d -p 8080:8080 --name testapp ghcr.io/eridon-pro/go-helloworld-3:sha-${{ github.sha }}
+          sleep 10  # アプリ起動待ち（必要に応じて延長）
+
+      - name: Run OWASP ZAP Baseline Scan
+        #uses: zaproxy/action-baseline@v0.14.0
+        uses: zaproxy/action-baseline@master
+        with:
+          target: 'http://localhost:8080/hello'
+          #rules_file_name: .zap-rules.tsv  # 無視ルール（任意）
+          fail_action: true
+          docker_name: 'owasp/zap2docker-stable' # Default docker image (can be ommited)
+
+      - name: Stop app container
+        if: always()
+        run: docker rm -f testapp
+
+      # 14. SBOM の生成（Anchore sbom-action を利用）
       - name: Generate SBOM with Anchore SBOM Action
         uses: anchore/sbom-action@main
         with:
@@ -140,14 +159,14 @@ jobs:
           output_format: cyclonedx-json
           output_file: sbom-${{ github.sha }}.json
 
-      # 14. SBOM アーティファクトのアップロード
+      # 15. SBOM アーティファクトのアップロード
       - name: Upload SBOM Artifact
         uses: actions/upload-artifact@main
         with:
           name: sbom
           path: sbom-sha-${{ github.sha }}.json
 
-      # 15. マニフェストの更新
+      # 16. マニフェストの更新
       - name: Update manifest with new image tag
         run: |
           NEW_TAG=sha-${{ github.sha }}
@@ -166,14 +185,14 @@ jobs:
           git remote set-url origin "https://${{ secrets.PAT_TOKEN }}@github.com/eridon-pro/go-helloworld-3.git"
           git push origin main
 
-      # 16. Dependency Check レポートのアップロード
+      # 17. Dependency Check レポートのアップロード
       - name: Upload Dependency Check Reports
         uses: actions/upload-artifact@main
         with:
           name: dependency-check-reports
           path: reports/
 
-      # 17. Notify Discord on failure
+      # 18. Notify Discord on failure
       #- name: Notify Discord on failure
       #  if: failure()
       #  run: |
