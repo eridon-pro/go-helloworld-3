@@ -23,6 +23,12 @@ jobs:
         with:
           persist-credentials: false
 
+      # モジュール依存を確実に解決（失敗回避）
+      - name: Ensure dependencies
+        run: |
+          go mod tidy
+          go mod download
+
       # 2. 静的解析：GolangCI-Lint を実行
       - name: Run GolangCI-Lint
         #uses: golangci/golangci-lint-action@v3
@@ -31,6 +37,8 @@ jobs:
           #version: v1.50.1
           #version: latest
           skip-cache: true
+        env:
+          GO111MODULE: "on"
 
       # 3. テストの実行
       - name: Run tests
