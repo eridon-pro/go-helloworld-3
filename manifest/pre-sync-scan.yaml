@@ -14,7 +14,7 @@ spec:
         image: ghcr.io/sigstore/cosign/cosign:latest
         env:
           - name: IMAGE_REF
-            value: ghcr.io/eridon-pro/go-helloworld-3:sha-a4dd716580227e4cce62f60460853a1ca29d1fde
+            value: ghcr.io/eridon-pro/go-helloworld-3:sha-1b268f534b308b09877a4d1c0fbc9747adc7eaec
         command: ["cosign", "verify", 
           "--certificate-oidc-issuer", "https://token.actions.githubusercontent.com", 
           "--certificate-identity-regexp", "^https://github.com/eridon-pro/go-helloworld-3/", 
@@ -23,6 +23,6 @@ spec:
         image: aquasec/trivy:latest
         env:
           - name: IMAGE_REF
-            value: ghcr.io/eridon-pro/go-helloworld-3:sha-a4dd716580227e4cce62f60460853a1ca29d1fde
+            value: ghcr.io/eridon-pro/go-helloworld-3:sha-1b268f534b308b09877a4d1c0fbc9747adc7eaec
         command: ["trivy", "image", "--exit-code", "1", "--severity", "HIGH,CRITICAL", "$(IMAGE_REF)"]
   backoffLimit: 1
