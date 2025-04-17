@@ -30,10 +30,10 @@ func Hello() echo.HandlerFunc {
 <head>
   <meta charset="utf-8">
   <meta http-equiv="refresh" content="30">
-  <title>hello, world!!!</title>
+  <title>hello, world.</title>
 </head>
 <body>
-  <h1>hello, world!!!</h1>
+  <h1>hello, world.</h1>
 </body>
 </html>`
         return c.HTML(http.StatusOK, html)
