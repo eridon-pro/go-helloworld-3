@@ -27,9 +27,10 @@ jobs:
       - name: Run GolangCI-Lint
         #uses: golangci/golangci-lint-action@v3
         uses: golangci/golangci-lint-action@main
-      #  with:
-      #    version: v1.50.1
-      #    version: latest
+        with:
+          #version: v1.50.1
+          #version: latest
+          skip-cache: true
 
       # 3. テストの実行
       - name: Run tests
