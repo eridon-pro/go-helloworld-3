@@ -21,8 +21,8 @@ github.com/valyala/fasttemplate
 ## explicit; go 1.23
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
-# golang.org/x/net v0.21.0
-## explicit; go 1.18
+# golang.org/x/net v0.39.0
+## explicit; go 1.23
 golang.org/x/net/idna
 # golang.org/x/sys v0.32.0
 ## explicit; go 1.23
