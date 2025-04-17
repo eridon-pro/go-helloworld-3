@@ -138,14 +138,14 @@ jobs:
           docker run -d -p 8080:8080 --name testapp ghcr.io/eridon-pro/go-helloworld-3:sha-${{ github.sha }}
           sleep 10  # アプリ起動待ち（必要に応じて延長）
 
-      - name: Run OWASP ZAP Baseline Scan
+      - name: Run OWASP ZAP Baseline DAST Scan
         #uses: zaproxy/action-baseline@v0.14.0
         uses: zaproxy/action-baseline@master
         with:
           target: 'http://localhost:8080/hello'
           #rules_file_name: .zap-rules.tsv  # 無視ルール（任意）
           fail_action: true
-          docker_name: 'owasp/zap2docker-stable' # Default docker image (can be ommited)
+          #docker_name: 'owasp/zap2docker-stable' # Default docker image (can be ommited)
 
       - name: Stop app container
         if: always()
